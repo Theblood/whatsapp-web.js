@@ -1394,16 +1394,18 @@ class Client extends EventEmitter {
                 if ((await window.Store.QueryExist(pWid))?.wid) participantWids.push(pWid);
                 else failedParticipants.push(participant);
             }
-
+            
             parentGroupId && (parentGroupWid = window.Store.WidFactory.createWid(parentGroupId));
 
             try {
-                createGroupResult = await window.Store.GroupUtils.createGroup(
-                    title,
-                    participantWids,
-                    messageTimer,
-                    parentGroupWid
-                );
+                createGroupResult = await window.Store.GroupUtils.createGroup({
+                    "title": title,
+                    "ephemeralDuration": messageTimer,
+                    "restrict": true,
+                    "announce": true,
+                    "membershipApprovalMode": false,
+                    "memberAddMode": true
+                },participantWids);
             } catch (err) {
                 return 'CreateGroupError: An unknown error occupied while creating a group';
             }
